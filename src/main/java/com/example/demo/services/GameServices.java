@@ -11,6 +11,8 @@ import com.example.demo.models.Player;
 import com.example.demo.models.Coordinate;
 
 import com.example.demo.repositories.GameRepository;
+import com.example.demo.repositories.PlayerRepository;
+
 
 
 
@@ -18,16 +20,17 @@ import com.example.demo.repositories.GameRepository;
 public class GameServices {
     @Autowired
     private GameRepository gameRepository;
-
+    @Autowired
+    private PlayerRepository playerRepository;
     // CREATE
     public void createGames() {
         System.out.println("Data creation started...");
 
         // Create players
-        Player player1 = new Player("Player1", "player1@email.com", 100, false);
-        Player player2 = new Player("Player2", "player2@email.com", 150, false);
+        Player player1 = new Player("Player1", "player1@email.com", 100, false,"Test");
+        Player player2 = new Player("Player2", "player2@email.com", 150, false,"Test");
 
-
+        Game game1 = new Game(player1, player2);
         // Create moves
         Coordinate start1 = new Coordinate(0, 0);
         Coordinate end1 = new Coordinate(1, 1);
@@ -38,13 +41,32 @@ public class GameServices {
         Move move2 = new Move(start2, end2);
 
         // Create games
-        Game game1 = new Game();
-        game1.setPlayers(List.of(player1, player2));
+        
+        //game1.setPlayers(List.of(player1, player2));
         game1.setMoves(List.of(move1, move2));
 
         gameRepository.save(game1);
 
         System.out.println("Data creation complete...");
+    }
+    public Game createNewGame(String player1Username, String player2Username) {
+
+        // check if player 1 exists
+        Player player1 = playerRepository.findByUsername(player1Username);
+        if (player1 == null) {
+            throw new IllegalArgumentException("Player with username " + player1Username + " does not exist");
+        }
+    
+        // check if player 2 exists
+        Player player2 = playerRepository.findByUsername(player2Username);
+        if (player2 == null) {
+            throw new IllegalArgumentException("Player with username " + player2Username + " does not exist");
+        }
+        System.out.println("New Game being created");
+    
+        Game game = new Game(player1, player2); // assuming an 8x8 board
+        return gameRepository.save(game);
+        
     }
 
     // Show all the games

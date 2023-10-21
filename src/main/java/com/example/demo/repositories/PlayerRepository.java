@@ -9,5 +9,6 @@ import com.example.demo.models.Player;
 @Repository
 public interface PlayerRepository extends MongoRepository<Player, String>{
     Player findByUsername(String username);
+    Player findByEmail(String email);
 
 }

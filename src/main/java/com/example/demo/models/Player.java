@@ -11,12 +11,14 @@ public class Player {
     private String email;
     private int score;
     private Boolean winner;
+    private String password;
 
-    public Player(String username, String email, int score, Boolean winner) {
+    public Player(String username, String email, int score, Boolean winner,String password) {
         this.username = username;
         this.email = email;
         this.score = score;
         this.winner = winner;
+        this.password = password;
     }
 
     public Boolean getWinnerStatus(){
@@ -58,5 +60,11 @@ public class Player {
 
     public void setScore(int score) {
     this.score = score;
+    }
+    public String getPassword(){
+        return password;
+    }
+    public void setPassword(String password) {
+    this.password = password;
     }
 }
