@@ -15,14 +15,19 @@ public class Game {
     private List<Move> moves;
     private Board board;
     private String status;
+    private Player currentPlayer;
+    private GameLogic gameLogic;
+
 
     // Constructors, getters, and setters
-    public Game(Player player1, Player player2) {
+    public Game(Player player1, Player player2, Player currentPlayer) {
         System.out.println("In game Constructor: Game.java");
         this.player1 = player1;
         this.player2 = player2;
         this.board = new Board(player1, player2,8, 8 );  // Initialize the board with the two players
         this.status = "ONGOING";  // Initial status of the game
+        this.currentPlayer = player1;
+        this.gameLogic = new GameLogic(this);
     }
 
     public String getGameId(){
@@ -68,6 +73,21 @@ public class Game {
     public void setMoves(List<Move> moves){
         this.moves = moves;
         
+    }
+    public Player getPlayer(Player player){
+        return player;
+    }
+
+    public Player getCurrentPlayer(){
+        return currentPlayer;
+    }
+
+    public void setCurrentPlayer(Player player){
+        this.currentPlayer = player;
+    }
+    
+    public GameLogic getGameLogic() {
+        return gameLogic;
     }
 
 }

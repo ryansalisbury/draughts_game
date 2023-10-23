@@ -9,13 +9,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+
 import com.example.demo.models.Player;
 import com.example.demo.models.Game;
-
+import com.example.demo.models.Move;
 import com.example.demo.services.GameServices;
+import com.example.demo.dto.MoveRequest;
 
 @RestController
-@RequestMapping("/games")
+@RequestMapping("/games/api")
 public class GameController {
 
     @Autowired
@@ -42,8 +44,25 @@ public class GameController {
             return ResponseEntity.ok(newGame);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
+        }
     }
-}
+
+    @PostMapping("/{gameId}/move")
+    public ResponseEntity<String> makeMove(
+            @PathVariable String gameId,
+            @RequestParam String playerUsername,
+            @RequestBody MoveRequest moveRequest) {
+        try {
+            gameServices.makeMove(gameId, playerUsername, moveRequest.getFrom(), moveRequest.getTo());
+            return ResponseEntity.ok("Move successful");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+
+
+
     //This works
     @GetMapping("/show_games")
     public void showAllGames() {
@@ -66,3 +85,4 @@ public class GameController {
         gameServices.findCountOfGames();
     }
 }
+

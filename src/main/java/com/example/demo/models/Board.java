@@ -27,18 +27,22 @@ public class Board {
         this.player2Pieces = initialisePlayer2Pieces(player2, numRows, numCols);
     }
     
-    //Method to initialise the playoing board
+    //Method to initialise the playing board
     private List<List<Space>> initializeSpaces(int numRows, int numCols) {
         System.out.println("In space initialiser: Board.java:");
         List<List<Space>> spaces = new ArrayList<>();
         for (int row = 0; row < numRows; row++) {
             List<Space> spaceRow = new ArrayList<>();
             for (int col = 0; col < numCols; col++) {
+                //create a new coordinate with x, y value of that row and col
                 Coordinate coordinate = new Coordinate(row, col);
-                Space space = new Space(coordinate, null);
-                spaceRow.add(space);
+                //Create a new space with the x, y coordinates
+                Space space = new Space(coordinate, null); 
+                //Add this space to the Row
+                spaceRow.add(space); 
             }
-            spaces.add(spaceRow);
+            //Add the created Row to the list of rows
+            spaces.add(spaceRow); 
         }
         return spaces;
     }
@@ -52,9 +56,10 @@ public class Board {
         for(int i = 0; i < numRows; i++){
             for(int j =0; j < numCols; j++){
                 int x = i + j;
-                if(x%2 == 0){
+                if(x%2 == 0 && pieceCounter < 12){
+                    System.out.println("In player1pieces initialiser: x = " + x);
                     Coordinate coordinate = new Coordinate(i, j);
-                    Piece piece = new Piece(pieceCounter, coordinate, true, player.getUsername());  // Assuming you have a constructor that takes these parameters
+                    Piece piece = new Piece(pieceCounter, coordinate, true, player);  // Assuming you have a constructor that takes these parameters
                     // Update the space to be occupied and assign the piece to that coordinate
                     spaces.get(i).get(j).setOccupied(true);
                     spaces.get(i).get(j).setPiece(piece);
@@ -67,6 +72,7 @@ public class Board {
                 }
             }
         }
+        player1.setPieces(player1Pieces);
         return player1Pieces;
     }
     //Method to initilise player2's pieces
@@ -79,15 +85,15 @@ public class Board {
         for(int i = numRows -1; i >= 0; i--){
             for(int j =numCols -1; j >= 0; j--){
                 int x = i + j;
-                if(x%2 == 1){
+                if(x%2 == 1 && pieceCounter < 12){
                     Coordinate coordinate = new Coordinate(i, j);
-                    Piece piece = new Piece(pieceCounter, coordinate, true, player.getUsername());  // Assuming you have a constructor that takes these parameters
-                    System.out.println(piece);
+                    Piece piece = new Piece(pieceCounter, coordinate, true, player);  // Assuming you have a constructor that takes these parameters
+                    //System.out.println(piece);
                     
                     // Update the space to be occupied and assign the piece to that coordinate
                     spaces.get(i).get(j).setOccupied(true);
                     spaces.get(i).get(j).setPiece(piece);
-                    System.out.println(spaces.get(i).get(j)); // Add this line
+                    //System.out.println(spaces.get(i).get(j)); // Add this line
                     player2Pieces.add(piece);
                     pieceCounter++;
 
@@ -97,7 +103,26 @@ public class Board {
                 }
             }
         }
+        player2.setPieces(player2Pieces);
         return player2Pieces;
+    }
+
+    public Piece getPieceAtCoordinate(Coordinate coordinate) {
+        int x = coordinate.getX();
+        int y = coordinate.getY();
+        if (x >= 0 && x < spaces.size() && y >= 0 && y < spaces.get(0).size()) {
+            return spaces.get(x).get(y).getPiece();
+        }
+        return null;
+    }
+
+    public Space getSpaceAtCoordinate(Coordinate coordinate) {
+        int x = coordinate.getX();
+        int y = coordinate.getY();
+        if (x >= 0 && x < spaces.size() && y >= 0 && y < spaces.get(0).size()) {
+            return spaces.get(x).get(y);
+        }
+        return null; // return null if the coordinate is out of bounds
     }
 
     public String getId() {

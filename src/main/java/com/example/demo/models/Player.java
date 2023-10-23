@@ -1,5 +1,7 @@
 package com.example.demo.models;
 
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -12,6 +14,10 @@ public class Player {
     private int score;
     private Boolean winner;
     private String password;
+    private List<Piece> pieces; // List of pieces belonging to this player
+
+    
+
 
     public Player(String username, String email, int score, Boolean winner,String password) {
         this.username = username;
@@ -19,6 +25,15 @@ public class Player {
         this.score = score;
         this.winner = winner;
         this.password = password;
+    }
+
+    
+    public List<Piece> getPieces() {
+        return pieces;
+    }
+
+    public void setPieces(List<Piece> pieces) {
+        this.pieces = pieces;
     }
 
     public Boolean getWinnerStatus(){

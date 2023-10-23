@@ -34,5 +34,7 @@ public class Space {
     public void setOccupied(boolean occupied) {
         this.occupied = occupied;
     }
+
+
 }
 
