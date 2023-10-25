@@ -7,14 +7,11 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.models.Game;
 import com.example.demo.models.GameLogic;
-import com.example.demo.models.Move;
 import com.example.demo.models.Player;
 import com.example.demo.models.Coordinate;
 
 import com.example.demo.repositories.GameRepository;
 import com.example.demo.repositories.PlayerRepository;
-
-
 
 
 @Service
@@ -24,35 +21,35 @@ public class GameServices {
     @Autowired
     private PlayerRepository playerRepository;
 
-    private GameLogic gameLogic; // create an instance of GameLogic
+    //private GameLogic gameLogic; // create an instance of GameLogic
 
-    // CREATE
-    public void createGames() {
-        System.out.println("Data creation started...");
+    // // CREATE
+    // public void createGames() {
+    //     System.out.println("Data creation started...");
 
-        // Create players
-        Player player1 = new Player("Player1", "player1@email.com", 100, false,"Test");
-        Player player2 = new Player("Player2", "player2@email.com", 150, false,"Test");
+    //     // Create players
+    //     Player player1 = new Player("Player1", "player1@email.com", 100, false,"Test");
+    //     Player player2 = new Player("Player2", "player2@email.com", 150, false,"Test");
 
-        Game game1 = new Game(player1, player2, player1);
-        // Create moves
-        Coordinate start1 = new Coordinate(0, 0);
-        Coordinate end1 = new Coordinate(1, 1);
-        Move move1 = new Move(start1, end1);
+    //     Game game1 = new Game(player1, player2, player1);
+    //     // Create moves
+    //     Coordinate start1 = new Coordinate(0, 0);
+    //     Coordinate end1 = new Coordinate(1, 1);
+    //     Move move1 = new Move(start1, end1);
 
-        Coordinate start2 = new Coordinate(2, 2);
-        Coordinate end2 = new Coordinate(3, 3);
-        Move move2 = new Move(start2, end2);
+    //     Coordinate start2 = new Coordinate(2, 2);
+    //     Coordinate end2 = new Coordinate(3, 3);
+    //     Move move2 = new Move(start2, end2);
 
-        // Create games
+    //     // Create games
         
-        //game1.setPlayers(List.of(player1, player2));
-        game1.setMoves(List.of(move1, move2));
+    //     //game1.setPlayers(List.of(player1, player2));
+    //     game1.setMoves(List.of(move1, move2));
 
-        gameRepository.save(game1);
+    //     gameRepository.save(game1);
 
-        System.out.println("Data creation complete...");
-    }
+    //     System.out.println("Data creation complete...");
+    // }
 
     public Game createNewGame(String player1Username, String player2Username) {
 
@@ -67,23 +64,29 @@ public class GameServices {
         if (player2 == null) {
             throw new IllegalArgumentException("Player with username " + player2Username + " does not exist");
         }
-        System.out.println("New Game being created");
     
         Game game = new Game(player1, player2, player1); // assuming an 8x8 board
-        GameLogic gameLogic = new GameLogic(game);  // Create a GameLogic instance with the game
-
-        return gameRepository.save(game);
+        //gameLogic = new GameLogic(game);  // Create a GameLogic instance with the game
+       
+        try {
+            return gameRepository.save(game);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
         
     }
 
     public void makeMove(String gameId, String playerUsername, Coordinate from, Coordinate to) {
         Game game = gameRepository.findById(gameId).orElseThrow(() -> new IllegalArgumentException("Game not found"));
+        
+
         Player player = playerRepository.findByUsername(playerUsername);
         if (player == null) {
             throw new IllegalArgumentException("Player not found");
         }
 
-        GameLogic gameLogic = game.getGameLogic();  // Assuming you have a getter for gameLogic in your Game class
+        GameLogic gameLogic = new GameLogic();
         if (gameLogic.makeMove(game, player, from, to)) {
             // Move was successful, save the updated game state
             gameRepository.save(game);
@@ -104,6 +107,8 @@ public class GameServices {
         System.out.println("Getting game by ID: " + id);
         Game game = gameRepository.findById(id).orElse(null);
         System.out.println(getGameDetails(game));
+        System.out.println("Player1 object"+game.getPlayer1());
+
     }
 
     // Get games by player name

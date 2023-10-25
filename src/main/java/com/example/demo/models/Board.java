@@ -15,21 +15,29 @@ public class Board {
     private List<Piece> player2Pieces; //List of player 2 pieces
     private Player player1;
     private Player player2;
+    private int numRows = 8;  // Default value
+    private int numCols = 8;  // Default value
+
+ 
+
 
 
     //initialise board, with spaces:
 
-    public Board(Player player1, Player player2, int numRows, int numCols) {
+    public Board(Player player1, Player player2) {
         this.player1 = player1;
         this.player2 = player2;
         this.spaces = initializeSpaces(numRows, numCols);
+       
         this.player1Pieces = initialisePlayer1Pieces(player1, numRows, numCols); 
         this.player2Pieces = initialisePlayer2Pieces(player2, numRows, numCols);
+        
+
     }
     
     //Method to initialise the playing board
     private List<List<Space>> initializeSpaces(int numRows, int numCols) {
-        System.out.println("In space initialiser: Board.java:");
+        
         List<List<Space>> spaces = new ArrayList<>();
         for (int row = 0; row < numRows; row++) {
             List<Space> spaceRow = new ArrayList<>();
@@ -57,9 +65,8 @@ public class Board {
             for(int j =0; j < numCols; j++){
                 int x = i + j;
                 if(x%2 == 0 && pieceCounter < 12){
-                    System.out.println("In player1pieces initialiser: x = " + x);
                     Coordinate coordinate = new Coordinate(i, j);
-                    Piece piece = new Piece(pieceCounter, coordinate, true, player);  // Assuming you have a constructor that takes these parameters
+                    Piece piece = new Piece(pieceCounter, coordinate, true, player.getUsername());  // Assuming you have a constructor that takes these parameters
                     // Update the space to be occupied and assign the piece to that coordinate
                     spaces.get(i).get(j).setOccupied(true);
                     spaces.get(i).get(j).setPiece(piece);
@@ -73,6 +80,7 @@ public class Board {
             }
         }
         player1.setPieces(player1Pieces);
+        System.out.println("Successfully initilised Player1 pieces on board");
         return player1Pieces;
     }
     //Method to initilise player2's pieces
@@ -87,13 +95,11 @@ public class Board {
                 int x = i + j;
                 if(x%2 == 1 && pieceCounter < 12){
                     Coordinate coordinate = new Coordinate(i, j);
-                    Piece piece = new Piece(pieceCounter, coordinate, true, player);  // Assuming you have a constructor that takes these parameters
-                    //System.out.println(piece);
+                    Piece piece = new Piece(pieceCounter, coordinate, true, player.getUsername());  // Assuming you have a constructor that takes these parameters
                     
                     // Update the space to be occupied and assign the piece to that coordinate
                     spaces.get(i).get(j).setOccupied(true);
                     spaces.get(i).get(j).setPiece(piece);
-                    //System.out.println(spaces.get(i).get(j)); // Add this line
                     player2Pieces.add(piece);
                     pieceCounter++;
 
@@ -104,6 +110,8 @@ public class Board {
             }
         }
         player2.setPieces(player2Pieces);
+        System.out.println("Successfully initilised Player2 pieces on board");
+
         return player2Pieces;
     }
 
@@ -129,7 +137,6 @@ public class Board {
         return id;
     }
 
-    ////////////////////////////////////////////////////////////////
     // Getters and setters...
     public List<List<Space>> getSpaces() {
         return spaces;
@@ -170,6 +177,33 @@ public class Board {
     public void setPlayer2(Player player2) {
         this.player2 = player2;
     }
+
+    public List<Piece> getPlayerPieces(Player player){
+        if(player.equals(player1)){
+            return player1Pieces;
+        }
+        else{
+            return player2Pieces;
+        }
+    }
+
+    // Getter and setter
+    public int getNumRows() {
+        return numRows;
+    }
+
+    public void setNumRows(int numRows) {
+        this.numRows = numRows;
+    }
+    // Getter and setter
+    public int getNumCols() {
+        return numCols;
+    }
+
+    public void setNumCols(int numCols) {
+        this.numCols = numCols;
+    }
+
 }
 
 

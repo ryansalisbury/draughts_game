@@ -9,13 +9,14 @@ public class Piece {
     private int number; // Number from 1 to 12 that I will initialise when the game is created
     private Coordinate position; //The position on the board that the piece is occupying
     private boolean active; //If a piece is taken by opposition then this will be set to false
-    private Player player;//Will get the username of the player when th game is started
+    //private Player player;
+    private String playerUsername;//Will get the username of the player when th game is started
 
-    public Piece(int number, Coordinate position, boolean active, Player player) {
+    public Piece(int number, Coordinate position, boolean active, String playerUsername) {
         this.number = number; //Id access for me for each counter
         this.position = position; //Coordinate of that piece on the board
         this.active = active; // Is this piece in the game or not
-        this.player = player;
+        this.playerUsername = playerUsername;
     }
 
     public void setActiveStatus(Boolean active){
@@ -34,8 +35,11 @@ public class Piece {
         return position;
     }
 
-    public Player getPlayer(){
-        return player;
+    public String getPlayerUsername(){
+        return playerUsername;
+    }
+    public void setPlayerUsername(String playerUsername){
+        this.playerUsername = playerUsername;
     }
 
     public void setPieceNumber(int number){

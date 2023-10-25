@@ -1,5 +1,6 @@
 package com.example.demo.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
@@ -25,6 +26,7 @@ public class Player {
         this.score = score;
         this.winner = winner;
         this.password = password;
+        this.pieces = new ArrayList<>();
     }
 
     

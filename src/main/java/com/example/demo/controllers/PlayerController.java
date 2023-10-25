@@ -3,6 +3,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,12 +14,17 @@ import com.example.demo.models.Player;
 import com.example.demo.services.PlayerServices;
 
 
+
+
+
 @RestController
 @RequestMapping("/players")
 public class PlayerController {
 
     @Autowired
     private PlayerServices playerServices;
+
+
 
     //@RequestBody annotation is used to bind the JSON request body to the Player object
     @PostMapping("/create_new_player")

@@ -1,6 +1,8 @@
 package com.example.demo.controllers;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,9 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
-import com.example.demo.models.Player;
 import com.example.demo.models.Game;
-import com.example.demo.models.Move;
 import com.example.demo.services.GameServices;
 import com.example.demo.dto.MoveRequest;
 
@@ -27,7 +27,7 @@ public class GameController {
     // public void createGames() {
     //     gameServices.createGames();
     // }
-    // @PostMapping("/create_new_game")
+    // @PostMapping("/create_new")
     // public ResponseEntity<Game> createNewGame(@RequestBody Game game) {
     //     try {
     //         Game newGame = gameServices.createNewGame(game.getPlayer1().getUsername(), game.getPlayer2().getUsername());

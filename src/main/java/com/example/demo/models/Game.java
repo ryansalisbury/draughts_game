@@ -2,7 +2,6 @@ package com.example.demo.models;
 //package import for this needs to go here e.g. package com.example.....
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -16,18 +15,16 @@ public class Game {
     private Board board;
     private String status;
     private Player currentPlayer;
-    private GameLogic gameLogic;
+   
 
 
     // Constructors, getters, and setters
     public Game(Player player1, Player player2, Player currentPlayer) {
-        System.out.println("In game Constructor: Game.java");
         this.player1 = player1;
         this.player2 = player2;
-        this.board = new Board(player1, player2,8, 8 );  // Initialize the board with the two players
+        this.board = new Board(player1, player2);  // Initialize the board with the two players
         this.status = "ONGOING";  // Initial status of the game
         this.currentPlayer = player1;
-        this.gameLogic = new GameLogic(this);
     }
 
     public String getGameId(){
@@ -85,9 +82,16 @@ public class Game {
     public void setCurrentPlayer(Player player){
         this.currentPlayer = player;
     }
-    
-    public GameLogic getGameLogic() {
-        return gameLogic;
+
+    public Player getPlayerByUsername(String username) {
+        if (username.equals(player1.getUsername())) {
+            return player1;
+        } else if (username.equals(player2.getUsername())) {
+            return player2;
+        } else {
+            throw new RuntimeException("Player not found");
+        }
     }
+    
 
 }

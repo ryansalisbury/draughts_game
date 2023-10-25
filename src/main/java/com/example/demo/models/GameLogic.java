@@ -1,29 +1,108 @@
 package com.example.demo.models;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import java.util.ArrayList;
-import java.util.List;
+
 
 
 public class GameLogic {
-    private Game game;
-
-    public GameLogic(Game game) {
-        this.game = game;
-    }
-
-    public Game getGame() {
-        return game;
+    
+    public GameLogic() {
     }
 
 
+     //Update game state
+    public boolean makeMove(Game game, Player player, Coordinate from, Coordinate to) {
+
+        if(player.equals(null)){
+            System.out.println("Make move failed as player = null;");
+            return false;
+        }
+        //Gets the board from the game parameter
+        Board board = game.getBoard();
+        //Gets the SelectedPiece from the board using the Coordinate parameters
+        Piece selectedPiece = board.getPieceAtCoordinate(from); //gets piece from coordinate on the board
+
+        //Validates the move from the player
+        if (!validateMove(player, board, from, to)) {
+            System.out.println("Invalid Move!");
+            return false; // Invalid move
+        }
+        //Checks if the Move is a "Take" e.g. is diaganol and is 2 x 2 square move
+        if(isTakeMove(from, to)){
+            if(checkTakePiece(player, board,  from, to, selectedPiece)){
+                //set the position of the moving players piece
+                //remove other players piece from the game
+                int midX = (from.getX() + to.getX()) / 2;
+                int midY = (from.getY() + to.getY()) / 2;
+                //set the taken space && piece to null and false
+                Coordinate oppostionSpace  = new Coordinate(midX, midY);
+                Space takenSpace = board.getSpaceAtCoordinate(oppostionSpace);
+                //Get the opposition Player
+                String OppositionPlayerUsername = takenSpace.getPiece().getPlayerUsername();
+                Player oppositionPlayer = game.getPlayerByUsername(OppositionPlayerUsername);
+                //remove the piece from the arraylist of pieces
+                oppositionPlayer.getPieces().remove(board.getPieceAtCoordinate(oppostionSpace));
+                //set space of taken piece to false
+                takenSpace.setOccupied(false);
+                //set piece variable of that space to null
+                takenSpace.setPiece(null);
+
+                //set position of selected piece
+                selectedPiece.setPosition(to);
+                System.out.println("Test print - inside the if(isTakeMove) and if(checkTakePiece)");
+
+                return true;
+
+            }
+            else{
+                System.out.println("checkTakePiece returned false");
+
+                return false;
+            }
+        }
+        //regular validated move
+        else{
+
+
+        /*Need to update 3 things everytime a piece is moved:
+         * 1) Update the Players.piece array
+         * 2) Update the board.pieces array
+         * 3) Update board.spaces too
+         */
+        int pieceNumber = selectedPiece.getPieceNumber();
+        System.out.println("Selected Pieces array, before modification: "+ player.getPieces());
+        // 1) Update the Players.piece array
+        player.getPieces().remove(selectedPiece);
+        System.out.println("Selected piece prior to modifying coordinates: .toString: " + selectedPiece.toString()+", selectedPiece.getPosition(): "+selectedPiece.getPosition()+", selectedPiece.getPlayerUsername(): "+selectedPiece.getPlayerUsername());
+        selectedPiece.setPosition(to);
+        player.getPieces().add(selectedPiece);
+        System.out.println("Selected piece after to modifying coordinates (.setPosition(to)): .toString: " + selectedPiece.toString()+", selectedPiece.getPosition(): "+selectedPiece.getPosition()+", selectedPiece.getPlayerUsername(): "+selectedPiece.getPlayerUsername());
+        player.setPieces(null);
+
+
+        // 2) Update the board.pieces array
+        board.getPlayerPieces(player).remove(selectedPiece);
+        board.getPlayerPieces(player).add(selectedPiece);
+
+        // 3) Update board.spaces too
+        board.getSpaceAtCoordinate(from).setOccupied(false);
+        board.getSpaceAtCoordinate(from).setPiece(null);
+        board.getSpaceAtCoordinate(to).setOccupied(true);
+        board.getSpaceAtCoordinate(to).setPiece(selectedPiece);
+
+        //Switch turns in game
+        switchTurn(game);
+
+        return true;
+
+        }
+
+    }
 
     //Handle Player Inputs
-    public boolean validateMove( Player player, Board board, Coordinate from, Coordinate to) {
+    public boolean validateMove(Player player, Board board, Coordinate from, Coordinate to) {
         if(board.getPieceAtCoordinate(from) != null){
             Piece playersPiece = board.getPieceAtCoordinate(from);
 
-            if(playersPiece.getPlayer().equals(player)){
+            if(playersPiece.getPlayerUsername().equals(player.getUsername())){
                 if(isValidMove(from, to)){
                 //checks if space at desired destination is occupied by any other piece
             if(!board.getSpaceAtCoordinate(to).getOccupied()){
@@ -52,73 +131,15 @@ public class GameLogic {
     }
 
 
-    //Update game state
-    public boolean makeMove(Game game, Player player, Coordinate from, Coordinate to) {
-        Board board = game.getBoard();
-        Piece selectedPiece = board.getPieceAtCoordinate(from); //gets piece from coordinate on the board
 
 
-        if (!validateMove(player, board, from, to)) {
-            return false; // Invalid move
-        }
-        if(isTakeMove(from, to)){
-            if(checkTakePiece(player, board,  from, to, selectedPiece)){
-                //set the position of the moving players piece
-                //remove other players piece from the game
-                int midX = (from.getX() + to.getX()) / 2;
-                int midY = (from.getY() + to.getY()) / 2;
-                //set the taken space && piece to null and false
-                Coordinate oppostionSpace  = new Coordinate(midX, midY);
-                Space takenSpace = board.getSpaceAtCoordinate(oppostionSpace);
-                Player oppositionPlayer = takenSpace.getPiece().getPlayer();
-                //remove the piece from the arraylist of pieces
-                oppositionPlayer.getPieces().remove(board.getPieceAtCoordinate(oppostionSpace));
-                //set space of taken piece to false
-                takenSpace.setOccupied(false);
-                //set piece variable of that space to null
-                takenSpace.setPiece(null);
-
-                //set position of selected piece
-                selectedPiece.setPosition(to);
-                
-                
-                return true;
-
-            }
-            else{
-                return false;
-            }
-        }
-        //regular validated move
-        else{
-        // Update the position of the piece
-        selectedPiece.setPosition(to); //Sets the position of selected piece to requested position
-        board.getSpaceAtCoordinate(to).setOccupied(true);//Sets the space as occupied
-        Piece oldPiece = board.getSpaceAtCoordinate(from).getPiece();
-        oldPiece = null;
-        checkTakePiece(player, board, from, to, selectedPiece);
-        switchTurn(game);
-
-        return true;
-
-        }
-
+    public boolean checkTakePiece(Player player, Board board, Coordinate from, Coordinate to, Piece selectedPiece) {
+        Space destinationSpace = board.getSpaceAtCoordinate(to);
+    
+        // Check if destination space is unoccupied and the move is a valid taking move
+        return !destinationSpace.getOccupied() && isValidTakingMove(board, from, to, selectedPiece);
     }
-
-    public boolean checkTakePiece(Player player, Board board, Coordinate from, Coordinate to, Piece selectedPiece){
-        Piece destinationPiece = board.getPieceAtCoordinate(to);
-
-        // Check if destination coordinate is occupied by an opponent's piece
-        if (destinationPiece != null && !destinationPiece.getPlayer().getId().equals(player.getId())) {
-            // Check if the move from 'from' to 'to' is a valid taking move
-            // This depends on the specific rules of your game
-            if (isValidTakingMove(board, from, to, selectedPiece)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
+    
     public boolean isTakeMove(Coordinate from, Coordinate to) {
         int deltaX = Math.abs(to.getX() - from.getX());
         int deltaY = Math.abs(to.getY() - from.getY());
@@ -126,72 +147,50 @@ public class GameLogic {
         // Check if the move is two spaces diagonally
         return deltaX == 2 && deltaY == 2;
     }
-
+    
     public boolean isValidMove(Coordinate from, Coordinate to) {
         int toX = to.getX();
         int toY = to.getY();
-        //checks the move is within the board parameters
-        if((toX <= 0 || toY <= 0) || (toX > 7 || toY > 7)){
+    
+        // Check if the move is within the board parameters
+        if (toX < 0 || toY < 0 || toX > 7 || toY > 7) {
             return false;
         }
-        //gets the added magnitude of each move
+    
         int deltaX = Math.abs(to.getX() - from.getX());
         int deltaY = Math.abs(to.getY() - from.getY());
-
+    
         // Check if the move is diagonal
         if (deltaX != deltaY) {
-            return false; // Not a diagonal move
+            return false;
         }
-
-        // Check if the move is a 'take' move
-        if (deltaX == 2 && deltaY == 2) {
-            return true; // Valid 'take' move
-        }
-
-        // Check if the move is a regular diagonal move
-        if (deltaX == 1 && deltaY == 1) {
-            return true; // Valid regular diagonal move
-        }
-
-        return false; // Not a valid move
+    
+        // Check if the move is a 'take' move or a regular diagonal move
+        return deltaX == 2 || deltaX == 1;
     }
-
-
-    public boolean isValidTakingMove(Board board, Coordinate from, Coordinate to, Piece selectedPiece){
-        if(isValidMove(from, to)){
-            if(isTakeMove(from, to) == true){
-                //checks that the to coordinates are not occupied by any other piece
-                if(board.getSpaceAtCoordinate(to).getOccupied() == false){
-                    return true;
-                }
-                else{
-                    return false;
-                }
-            }
-
-        }
-        //checks that the move is diaganol and is 2 squares
-        return false;
-    }
+    
+    public boolean isValidTakingMove(Board board, Coordinate from, Coordinate to, Piece selectedPiece) {
+        return isValidMove(from, to) && isTakeMove(from, to);
+    }    
 
     public boolean takePiece(Board board, Coordinate from, Coordinate to) {
-    // Find the midpoint coordinates
-    int midX = (from.getX() + to.getX()) / 2;
-    int midY = (from.getY() + to.getY()) / 2;
+        // Find the midpoint coordinates
+        int midX = (from.getX() + to.getX()) / 2;
+        int midY = (from.getY() + to.getY()) / 2;
 
-    // Get the space at the midpoint
-    Space takenSpace = board.getSpaceAtCoordinate(new Coordinate(midX, midY));
-    
-    // Check if there is an opposition piece at the midpoint
-    if (takenSpace != null && takenSpace.getPiece() != null && takenSpace.getOccupied()) {
-        // Remove the taken piece
-        takenSpace.setPiece(null);
-        takenSpace.setOccupied(false);
-        return true; // Piece successfully taken
+        // Get the space at the midpoint
+        Space takenSpace = board.getSpaceAtCoordinate(new Coordinate(midX, midY));
+        
+        // Check if there is an opposition piece at the midpoint
+        if (takenSpace != null && takenSpace.getPiece() != null && takenSpace.getOccupied()) {
+            // Remove the taken piece
+            takenSpace.setPiece(null);
+            takenSpace.setOccupied(false);
+            return true; // Piece successfully taken
+        }
+
+        return false; // No piece taken
     }
-
-    return false; // No piece taken
-}
 
 
     //Check for Win/Lose Conditions
