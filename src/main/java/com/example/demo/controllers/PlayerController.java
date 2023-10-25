@@ -3,7 +3,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,12 +29,14 @@ public class PlayerController {
     @PostMapping("/create_new_player")
     public ResponseEntity<Player> createNewPlayer(@RequestBody Player player) {
         try {
-            Player newPlayer = playerServices.createNewPlayer(player.getUsername(), player.getEmail(), player.getScore(), player.getWinnerStatus(), player.getPassword());
+            Player newPlayer = playerServices.createNewPlayer(player.getUsername(), player.getEmail(), 0, false, player.getPassword());
             return ResponseEntity.ok(newPlayer);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         }
     }
+
+
 
 
     //Create test player data
