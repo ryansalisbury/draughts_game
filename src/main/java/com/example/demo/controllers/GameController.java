@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.demo.models.Game;
 import com.example.demo.services.GameServices;
+import com.example.demo.dto.GameRequest;
 import com.example.demo.dto.MoveRequest;
 
 @RestController
@@ -23,14 +24,11 @@ public class GameController {
     @Autowired
     private GameServices gameServices;
 
-    // @PostMapping
-    // public void createGames() {
-    //     gameServices.createGames();
-    // }
-    // @PostMapping("/create_new")
-    // public ResponseEntity<Game> createNewGame(@RequestBody Game game) {
+
+    // @PostMapping("/create_new_game")
+    // public ResponseEntity<Game> createNewGame(@RequestParam String player1Username, @RequestParam String player2Username) {
     //     try {
-    //         Game newGame = gameServices.createNewGame(game.getPlayer1().getUsername(), game.getPlayer2().getUsername());
+    //         Game newGame = gameServices.createNewGame(player1Username, player2Username);
     //         return ResponseEntity.ok(newGame);
     //     } catch (IllegalArgumentException e) {
     //         return ResponseEntity.badRequest().build();
@@ -38,14 +36,20 @@ public class GameController {
     // }
 
     @PostMapping("/create_new_game")
-    public ResponseEntity<Game> createNewGame(@RequestParam String player1Username, @RequestParam String player2Username) {
-        try {
-            Game newGame = gameServices.createNewGame(player1Username, player2Username);
+    public ResponseEntity<Game> createNewGame(@RequestBody GameRequest gameRequest){
+        try{
+            
+            Game newGame = gameServices.createNewGame(gameRequest.getPlayer1Username(), gameRequest.getPlayer2Username());
             return ResponseEntity.ok(newGame);
-        } catch (IllegalArgumentException e) {
+
+        }
+        catch (IllegalArgumentException e){
+            System.out.println("Build failed");;
             return ResponseEntity.badRequest().build();
         }
     }
+
+
 
     @PostMapping("/{gameId}/move")
     public ResponseEntity<String> makeMove(

@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <title>Checkers Application</title>
+        <title>Create New Game</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
         <link href="/styles.css" rel="stylesheet">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,27 +12,21 @@
         <div class="container d-flex justify-content-center align-items-center full-height">
             <div class="card custom-bg card-custom">
                 <div class="card-body">
-                    <h2 class="card-title text-center">Sign Up</h2>
-                    <form id="createPlayerForm">
+                    <h2 class="card-title text-center">Create New Game</h2>
+                    <form id="createGameForm">
                         <div class="row">
                             <div class="form-group">
-                                <label for="username">Username</label>
-                                <input type="text"  class="form-control" id="username" required>
+                                <label for="player1username">Player 1 Username</label>
+                                <input type="text" placeholder="Insert your username" class="form-control" id="player1username" required>
                             </div>
                         </div>
                         <div class="row">
                             <div class="form-group">
-                                <label for="email">Email address</label>
-                                <input type="email" placeholder="name@example.com" class="form-control" id="email" required>
+                                <label for="player2username">Player 2 Username</label>
+                                <input type="text" placeholder="Insert oppostion player's username" class="form-control" id="player2username" required>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="form-group">
-                                <label for="password">Password</label>
-                                <input type="password" class="form-control" id="password" required>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Sign Up</button>
+                        <button type="submit" class="btn btn-primary">Send Game request</button>
                     </form>
                 </div>
             </div>
@@ -42,20 +36,19 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     
     <script>
-    document.getElementById('createPlayerForm').addEventListener('submit', function(event) {
+    document.getElementById('createGameForm').addEventListener('submit', function(event) {
   
         event.preventDefault();
         
-        const username = document.getElementById('username').value;
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
+        const player1Username  = document.getElementById('player1username').value;
+        const player2Username = document.getElementById('player2username').value;
     
-        const jsonData = JSON.stringify({ username, email, password });
+        const jsonData = JSON.stringify({ player1Username, player2Username });
         console.log('JSON data being sent:', jsonData);
     
         
         // Make an API call to the backend to create the player
-        fetch('http://localhost:8080/players/create_new_player', {
+        fetch('http://localhost:8080/games/api/create_new_game', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -64,18 +57,12 @@
         })
         .then(response => response.json())
         .then(data => {
-          console.log('Player created:', data);
-          window.location.replace('http://localhost:8080/');
+          console.log('Game created:', data);
         })
         .catch((error) => {
-          console.error('Error creating player:', error);
-          window.location.replace('http://localhost:8080/player-ui/player-creation-form/');
-
+          console.error('Error creating game:', error);
         });
       });
       </script>
     </body>
 </html>
-
-
-
